@@ -26,7 +26,7 @@ module.exports = {
 			],
 			callback: (action, bank) => {
 				const opt = action.options
-				this.debug('Action options', opt)
+				//this.debug('Action options', opt)
 				const doc = this.getDocument(opt.document)
 				this.sendGetRequest('documents/' + doc.id + '/' + opt.action)
 			},
@@ -53,7 +53,7 @@ module.exports = {
 			],
 			callback: (action, bank) => {
 				let opt = action.options
-				this.debug('Action options', opt)
+				//this.debug('Action options', opt)
 				const layer = this.getLayer(opt.endpoint)
 				this.sendGetRequest(`documents/${layer.document}/layers/${layer.id}/${opt.action}`)
 			},

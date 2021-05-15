@@ -74,7 +74,7 @@ exports.initAPI = function () {
 								this.documents[docIndex].label = message.data.attributes.name
 								this.documents[docIndex].liveState = message.data.attributes['live-state']
 
-								this.debug('Changed document:', this.documents[docIndex])
+								//this.debug('Changed document:', this.documents[docIndex])
 								this.updateStatusVariables(docIndex)
 								this.checkFeedbacks('documentStatus')
 							}
@@ -144,7 +144,7 @@ exports.initAPI = function () {
 					break
 
 				case 'layer-sets':
-					this.debug('Message payload:', message)
+					//this.debug('Message payload:', message)
 					switch (message.event) {
 						case 'added':
 						case 'changed':
@@ -175,7 +175,7 @@ exports.initAPI = function () {
 					break
 
 				case 'output-destinations':
-					//					this.debug('Message payload:', message)
+					//this.debug('Message payload:', message)
 					switch (message.event) {
 						case 'added':
 						case 'changed':
