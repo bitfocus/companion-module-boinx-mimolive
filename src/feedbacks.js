@@ -15,9 +15,16 @@ exports.defineFeedbacks = function () {
 		default: this.rgb(255, 0, 0),
 	}
 
-	const backgroundColorStopping = {
+	const backgroundColorStop = {
 		type: 'colorpicker',
 		label: 'Background colour (shutdown)',
+		id: 'bgs',
+		default: this.rgb(255, 152, 0),
+	}
+
+	const backgroundColorStart = {
+		type: 'colorpicker',
+		label: 'Background colour (starting)',
 		id: 'bgs',
 		default: this.rgb(255, 152, 0),
 	}
@@ -44,6 +51,7 @@ exports.defineFeedbacks = function () {
 	}
 
 	feedbacks.documentStatus = {
+		type: 'advanced',
 		label: 'Document status',
 		description: 'Set colour based on the live status of a document',
 		options: [
@@ -57,7 +65,7 @@ exports.defineFeedbacks = function () {
 			},
 			foregroundColor,
 			backgroundColorLive,
-			backgroundColorStopping,
+			backgroundColorStop,
 		],
 		callback: ({ options }, bank) => {
 			const doc = this.getDocument(options.document)
@@ -74,6 +82,7 @@ exports.defineFeedbacks = function () {
 	}
 
 	feedbacks.layerStatus = {
+		type: 'advanced',
 		label: 'Layer status',
 		description: 'Set colour based on the live status of a layer',
 		options: [
@@ -87,7 +96,7 @@ exports.defineFeedbacks = function () {
 			},
 			foregroundColor,
 			backgroundColorLive,
-			backgroundColorStopping,
+			backgroundColorStop,
 		],
 		callback: ({ options }, bank) => {
 			const layer = this.getLayer(options.layer)
@@ -104,6 +113,7 @@ exports.defineFeedbacks = function () {
 	}
 
 	feedbacks.outputStatus = {
+		type: 'advanced',
 		label: 'Output status',
 		description: 'Set colour based on the live status of an output',
 		options: [
@@ -117,6 +127,7 @@ exports.defineFeedbacks = function () {
 			},
 			foregroundColor,
 			backgroundColorLive,
+			backgroundColorStart,
 			backgroundColorPreview,
 		],
 		callback: ({ options }, bank) => {
@@ -126,6 +137,8 @@ exports.defineFeedbacks = function () {
 				switch (output.liveState) {
 					case 'live':
 						return { color: options.fg, bgcolor: options.bgl }
+					case 'startup':
+						return { color: options.fg, bgcolor: options.bgs }
 					case 'preview':
 						return { color: options.fg, bgcolor: options.bgp }
 				}
@@ -134,24 +147,27 @@ exports.defineFeedbacks = function () {
 	}
 
 	feedbacks.layerSetStatus = {
+		type: 'boolean',
 		label: 'Layer Set status',
 		description: 'Set colour based on the active status of a layer set',
-		options: [
-			{
+		style: {
+			color: this.rgb(255, 255, 255),
+			bgcolor: this.rgb(0, 51, 204)
+		},
+		options: [{
 				type: 'textinput',
 				label: 'API endpoint',
 				id: 'endpoint',
 				tooltip: "Enter layer set's API endpoint",
 				default: '',
 				regex: this.REGEX_LAYERSET,
-			},
-			foregroundColor,
-			backgroundColorActive,
-		],
+			}],
 		callback: ({ options }, bank) => {
 			const layerSet = this.getLayerSet(options.endpoint)
 			if (layerSet.active) {
-				return { color: options.fg, bgcolor: options.bga }
+				return true
+			} else {
+				return false
 			}
 		},
 	}
