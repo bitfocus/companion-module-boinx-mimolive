@@ -326,7 +326,7 @@ processData = function (cmd, data) {
 		//		this.debug('Doc ID:', parentDocId)
 		//		this.debug(data)
 		for (layer in data) {
-			this.debug('Building Layer:', data[layer].relationships)
+			this.debug('Building Layer:', data[layer].attributes.name)
 			let index = data[layer].attributes.index
 			parentDoc.layers[index] = {
 				id: data[layer].id,
