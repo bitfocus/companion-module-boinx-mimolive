@@ -1,15 +1,9 @@
 const instance_skel = require('../../../instance_skel')
-const { initAPI, sendGetRequest } = require('./api')
+const api = require('./api')
 const actions = require('./actions')
-//const presets = require('./presets')
-const {
-	updateVariableDefinitions,
-	updateStatusVariables,
-	updateLayerVariables,
-	clearLayerVariables,
-} = require('./variables')
-const { initFeedbacks, executeFeedback } = require('./feedbacks')
-const { getDocument, getLayer, getLayerSet, getOutput } = require('./utils')
+const variables = require('./variables')
+const feedbacks = require('./feedbacks')
+const utils = require('./utils')
 
 let debug
 let log
@@ -22,18 +16,12 @@ class instance extends instance_skel {
 		super(system, id, config)
 
 		Object.assign(this, {
+			...api,
 			...actions,
+			...variables,
+			...feedbacks,
+			...utils
 		})
-
-		this.sendGetRequest = sendGetRequest
-		this.updateVariableDefinitions = updateVariableDefinitions
-		this.updateStatusVariables = updateStatusVariables
-		this.updateLayerVariables = updateLayerVariables
-		this.clearLayerVariables = clearLayerVariables
-		this.getDocument = getDocument
-		this.getLayer = getLayer
-		this.getLayerSet = getLayerSet
-		this.getOutput = getOutput
 
 		this.port = 8989 // Fixed port
 		this.apiSlug = '/api/v1/' // Needed for all api calls
@@ -96,7 +84,7 @@ class instance extends instance_skel {
 
 		this.status(this.STATUS_WARNING, 'Connecting')
 
-		initAPI.bind(this)()
+		this.initAPI()
 
 		this.initVariables()
 		this.initFeedbacks()
@@ -117,7 +105,7 @@ class instance extends instance_skel {
 	 * Set available feedback choices
 	 */
 	initFeedbacks() {
-		const feedbacks = initFeedbacks.bind(this)()
+		const feedbacks = this.defineFeedbacks()
 		this.setFeedbackDefinitions(feedbacks)
 	}
 

@@ -1,4 +1,4 @@
-exports.initFeedbacks = function () {
+exports.defineFeedbacks = function () {
 	const feedbacks = {}
 
 	const foregroundColor = {
