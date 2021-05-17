@@ -35,7 +35,7 @@ Dynamic variables are generated for all open documents, and can be accessed usin
 
 All actions and feedbacks can be targeted using the **API endpoint** provided within mimoLive--see [this page in the manual](https://mimolive.com/manual/5/en/topic/examples-of-api-usage) for details on how to get API endpoints.
 
-Alternatively, **document and layer** actions can be targeted using a document (and layer) index. The first document opened in a session is index 1, the second index 2, and so on.  The layer index matches the layer stack within the document, with layer 1 being at the top. For document only actions/feedbacks, just the `<document index>` is needed; for layer actions/feedbacks, the format is `<document index>,<layer index>`
+Alternatively, **document and layer** actions can be targeted using a document (and layer) index. The first document opened in a session is index 1, the second index 2, and so on. The layer index matches the layer stack within the document, with layer 1 being at the top. For document only actions/feedbacks, just the `<document index>` is needed; for layer actions/feedbacks, the format is `<document index>,<layer index>`
 
 ### Limitations
 

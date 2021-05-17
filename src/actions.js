@@ -59,6 +59,23 @@ module.exports = {
 			},
 		}
 
+		actions['layerSet'] = {
+			label: 'Layer Set Recall',
+			options: [
+				{
+					type: 'textinput',
+					label: 'API Endpoint',
+					id: 'endpoint',
+					default: '',
+					tooltip: 'Enter the API endpoint from the layer to control',
+					regex: this.REGEX_LAYERSET,
+				},
+			],
+			callback: (action, bank) => {
+				this.sendGetRequest(action.options.endpoint + '/recall')
+			},
+		}
+
 		actions['output'] = {
 			label: 'Output Actions',
 			options: [
@@ -94,23 +111,6 @@ module.exports = {
 				}
 
 				this.sendGetRequest(opt.endpoint + '/' + opt.action)
-			},
-		}
-
-		actions['layerSet'] = {
-			label: 'Layer Set Recall',
-			options: [
-				{
-					type: 'textinput',
-					label: 'API Endpoint',
-					id: 'endpoint',
-					default: '',
-					tooltip: 'Enter the API endpoint from the layer to control',
-					regex: this.REGEX_LAYERSET,
-				},
-			],
-			callback: (action, bank) => {
-				this.sendGetRequest(action.options.endpoint + '/recall')
 			},
 		}
 
