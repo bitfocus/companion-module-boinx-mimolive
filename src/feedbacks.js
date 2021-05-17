@@ -8,10 +8,20 @@ exports.defineFeedbacks = function () {
 		default: this.rgb(255, 255, 255),
 	}
 
+	const styleLive = {
+		color: this.rgb(255, 255, 255),
+		bgcolor: this.rgb(255, 0, 0),
+	}
+
+	const stylePreview = {
+		color: this.rgb(255, 255, 255),
+		bgcolor: this.rgb(0, 165, 44),
+	}
+
 	const backgroundColorLive = {
 		type: 'colorpicker',
-		label: 'Background colour (live)',
-		id: 'bgl',
+		label: 'Background colour (shutdown)',
+		id: 'bgs',
 		default: this.rgb(255, 0, 0),
 	}
 
@@ -51,9 +61,9 @@ exports.defineFeedbacks = function () {
 	}
 
 	feedbacks.documentStatus = {
-		type: 'advanced',
+		type: 'boolean',
 		label: 'Document status',
-		description: 'Set colour based on the live status of a document',
+		description: 'Change the style based on the status of a document',
 		options: [
 			{
 				type: 'textinput',
@@ -63,28 +73,32 @@ exports.defineFeedbacks = function () {
 				default: '1',
 				regex: this.REGEX_DOCUMENT,
 			},
-			foregroundColor,
-			backgroundColorLive,
-			backgroundColorStop,
+			{
+				type: 'dropdown',
+				label: 'Status',
+				id: 'status',
+				default: 'live',
+				choices: [
+					{ id: 'live', label: 'Live' },
+					{ id: 'shutdown', label: 'Shutdown' },
+					{ id: 'off', label: 'Off' },
+				],
+			},
 		],
+		style: styleLive,
 		callback: ({ options }, bank) => {
 			const doc = this.getDocument(options.document)
-			//			this.debug('Feedback - Document:', doc)
+			//this.debug('Feedback - Document:', doc)
 			if (doc) {
-				switch (doc.liveState) {
-					case 'live':
-						return { color: options.fg, bgcolor: options.bgl }
-					case 'shutdown':
-						return { color: options.fg, bgcolor: options.bgs }
-				}
+				return options.status === doc.liveState
 			}
 		},
 	}
 
 	feedbacks.layerStatus = {
-		type: 'advanced',
+		type: 'boolean',
 		label: 'Layer status',
-		description: 'Set colour based on the live status of a layer',
+		description: 'Change the style based on the status of a layer',
 		options: [
 			{
 				type: 'textinput',
@@ -94,28 +108,61 @@ exports.defineFeedbacks = function () {
 				default: '1,1',
 				regex: this.REGEX_LAYER,
 			},
-			foregroundColor,
-			backgroundColorLive,
-			backgroundColorStop,
+			{
+				type: 'dropdown',
+				label: 'Status',
+				id: 'status',
+				default: 'live',
+				choices: [
+					{ id: 'live', label: 'Live' },
+					//{ id: 'preview', label: 'Preview' },
+					{ id: 'shutdown', label: 'Shutdown' },
+					{ id: 'off', label: 'Off' },
+				],
+			},
 		],
+		style: styleLive,
 		callback: ({ options }, bank) => {
 			const layer = this.getLayer(options.layer)
-			//			this.debug('Feedback - Layer:', layer)
+			//this.debug('Feedback - Layer:', layer)
 			if (layer) {
-				switch (layer.liveState) {
-					case 'live':
-						return { color: options.fg, bgcolor: options.bgl }
-					case 'shutdown':
-						return { color: options.fg, bgcolor: options.bgs }
-				}
+				return options.status === layer.liveState
+			}
+		},
+	}
+
+	feedbacks.layerSetStatus = {
+		type: 'boolean',
+		label: 'Layer Set active',
+		description: 'Change the style when a layer set is active',
+		style: {
+			color: this.rgb(255, 255, 255),
+			bgcolor: this.rgb(0, 51, 204),
+		},
+		options: [
+			{
+				type: 'textinput',
+				label: 'API endpoint',
+				id: 'endpoint',
+				tooltip: "Enter layer set's API endpoint",
+				default: '',
+				regex: this.REGEX_LAYERSET,
+			},
+		],
+		callback: ({ options }, bank) => {
+			const layerSet = this.getLayerSet(options.endpoint)
+			if (layerSet.active) {
+				return true
+			} else {
+				return false
 			}
 		},
 	}
 
 	feedbacks.outputStatus = {
-		type: 'advanced',
+		type: 'boolean',
 		label: 'Output status',
-		description: 'Set colour based on the live status of an output',
+		description: 'Change the style based on the status of an output',
 		options: [
 			{
 				type: 'textinput',
@@ -125,49 +172,25 @@ exports.defineFeedbacks = function () {
 				default: '',
 				regex: this.REGEX_OUTPUT,
 			},
-			foregroundColor,
-			backgroundColorLive,
-			backgroundColorStart,
-			backgroundColorPreview,
+			{
+				type: 'dropdown',
+				label: 'Status',
+				id: 'status',
+				default: 'live',
+				choices: [
+					{ id: 'live', label: 'Live' },
+					{ id: 'preview', label: 'Preview' },
+					{ id: 'startup', label: 'Startup' },
+					{ id: 'off', label: 'Off' },
+				],
+			},
 		],
+		style: styleLive,
 		callback: ({ options }, bank) => {
 			const output = this.getOutput(options.output)
 			//			this.debug('Feedback - Output:', output)
 			if (output) {
-				switch (output.liveState) {
-					case 'live':
-						return { color: options.fg, bgcolor: options.bgl }
-					case 'startup':
-						return { color: options.fg, bgcolor: options.bgs }
-					case 'preview':
-						return { color: options.fg, bgcolor: options.bgp }
-				}
-			}
-		},
-	}
-
-	feedbacks.layerSetStatus = {
-		type: 'boolean',
-		label: 'Layer Set status',
-		description: 'Set colour based on the active status of a layer set',
-		style: {
-			color: this.rgb(255, 255, 255),
-			bgcolor: this.rgb(0, 51, 204)
-		},
-		options: [{
-				type: 'textinput',
-				label: 'API endpoint',
-				id: 'endpoint',
-				tooltip: "Enter layer set's API endpoint",
-				default: '',
-				regex: this.REGEX_LAYERSET,
-			}],
-		callback: ({ options }, bank) => {
-			const layerSet = this.getLayerSet(options.endpoint)
-			if (layerSet.active) {
-				return true
-			} else {
-				return false
+				return options.status === output.liveState
 			}
 		},
 	}
