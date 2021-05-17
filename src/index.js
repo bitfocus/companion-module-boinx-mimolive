@@ -3,6 +3,7 @@ const api = require('./api')
 const actions = require('./actions')
 const variables = require('./variables')
 const feedbacks = require('./feedbacks')
+const presets = require('./presets')
 const utils = require('./utils')
 
 let debug
@@ -20,7 +21,8 @@ class instance extends instance_skel {
 			...actions,
 			...variables,
 			...feedbacks,
-			...utils
+			...presets,
+			...utils,
 		})
 
 		this.port = 8989 // Fixed port
@@ -89,6 +91,7 @@ class instance extends instance_skel {
 		this.initVariables()
 		this.initFeedbacks()
 		this.actions()
+		this.initPresets()
 	}
 
 	/**
@@ -107,6 +110,14 @@ class instance extends instance_skel {
 	initFeedbacks() {
 		const feedbacks = this.defineFeedbacks()
 		this.setFeedbackDefinitions(feedbacks)
+	}
+
+	/**
+	 * Initialize presets
+	 * @param  {} updates
+	 */
+	initPresets(updates) {
+		this.setPresetDefinitions(this.getPresets())
 	}
 
 	/**
