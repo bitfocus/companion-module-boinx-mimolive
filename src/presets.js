@@ -158,6 +158,52 @@ exports.getPresets = function () {
 	}
 
 	/**
+	* Variant presets
+	*/
+	presets.push({
+		category: `Variants`,
+		label: `Variant`,
+		bank: {
+			style: 'text',
+			text: `Variant`,
+			size: '18',
+			color: whiteColor,
+			bgcolor: blackColor,
+		},
+		actions: [
+			{
+				action: 'variant',
+				options: {
+					endpoint: ``,
+					action: 'toggleLive',
+				},
+			},
+		],
+		feedbacks: [
+			{
+				type: 'variantStatus',
+				options: {
+					endpoint: ``,
+					status: 'live',
+				},
+				style: {
+					bgcolor: liveColor,
+				},
+			},
+			{
+				type: 'variantStatus',
+				options: {
+					endpoint: ``,
+					status: 'shutdown',
+				},
+				style: {
+					bgcolor: shutdownColor,
+				},
+			},
+		],
+	})
+
+	/**
 	 * Layer set presets
 	 */
 	presets.push({

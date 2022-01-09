@@ -41,6 +41,11 @@ class instance extends instance_skel {
 			{ id: 'toggleLive', label: 'Toggle Live' },
 			{ id: 'cycleThroughVariants', label: 'Cycle Through Variants' },
 		]
+		this.CHOICES_VARIANTACTIONS = [
+			{ id: 'setLive', label: 'Set Live' },
+			{ id: 'setOff', label: 'Set Off' },
+			{ id: 'toggleLive', label: 'Toggle Live' },
+		]
 		this.CHOICES_OUTPUTACTIONS = [
 			{ id: 'setLive', label: 'Set Live' },
 			{ id: 'setOff', label: 'Set Off' },
@@ -49,6 +54,7 @@ class instance extends instance_skel {
 
 		this.REGEX_DOCUMENT = '(^[0-9]+$)|(/api/v1/documents/([0-9]+))'
 		this.REGEX_LAYER = '^([0-9]+,[0-9]+)|(/api/v1/documents/([0-9]+)/layers/([0-9-A-Z]+))$'
+		this.REGEX_VARIANT = '^/api/v1/documents/([0-9]+)/layers/([0-9-A-Z]+)/variants/([0-9-A-Z]+)$'
 		this.REGEX_OUTPUT = '^/api/v1/documents/([0-9]+)/output-destinations/([0-9-A-Z]+)$'
 		this.REGEX_LAYERSET = '^/api/v1/documents/([0-9]+)/layer-sets/([0-9-A-Z]+)$'
 	}

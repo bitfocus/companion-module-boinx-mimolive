@@ -8,7 +8,7 @@ exports.updateVariableDefinitions = function () {
 	// document variables:
 	this.documents.forEach((doc, docIndex) => {
 		variables.push({
-			label: `Document ${docIndex + 1}`,
+			label: `Document ${docIndex + 1} Name`,
 			name: `doc_${docIndex + 1}_name`,
 		})
 
@@ -19,7 +19,7 @@ exports.updateVariableDefinitions = function () {
 
 		doc.layers.forEach((layer, index) => {
 			variables.push({
-				label: `Doc ${docIndex + 1} Layer ${index + 1}`,
+				label: `Doc ${docIndex + 1} Layer ${index + 1} Name`,
 				name: `layer_${docIndex + 1}_${index + 1}_name`,
 			})
 			variables.push({

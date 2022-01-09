@@ -130,6 +130,41 @@ exports.defineFeedbacks = function () {
 			}
 		},
 	}
+	
+	feedbacks.variantStatus = {
+		type: 'boolean',
+		label: 'Variant status',
+		description: 'Change the style based on the status of a variant',
+		options: [
+			{
+				type: 'textinput',
+				label: 'API endpoint',
+				id: 'variant',
+				tooltip: "Enter variant's API endpoint",
+				default: '',
+					regex: this.REGEX_VARIANT,
+			},
+			{
+				type: 'dropdown',
+				label: 'Status',
+				id: 'status',
+				default: 'live',
+					choices: [
+						{ id: 'live', label: 'Live' },
+						{ id: 'shutdown', label: 'Shutdown' },
+						{ id: 'off', label: 'Off' },
+					],
+			},
+		],
+		style: styleLive,
+		callback: ({ options }, bank) => {
+			const variant = this.getVariant(options.variant)
+			// this.debug('Feedback - Variant:', variant)
+			if (variant) {
+				return options.status === variant.liveState
+			}
+		},
+	}
 
 	feedbacks.layerSetStatus = {
 		type: 'boolean',

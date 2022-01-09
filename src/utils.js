@@ -36,6 +36,19 @@ function getLayer(ref) {
 	return false
 }
 
+function getVariant(ref) {
+	// this.debug('Getting variant:', ref)
+	let variant = RegExp(this.REGEX_VARIANT).exec(ref)
+	// this.debug('Variant is:', variant)
+	if (variant) {
+		const layer = this.getLayer(`/documents/${variant[1]}/layers/${variant[2]}`)
+		if (layer) {
+			// this.debug('Layer is:', layer)
+			return layer.variants.find((v) => v.id === variant[3])
+		}
+	}
+}
+
 function getLayerSet(ref) {
 	let layerSet = RegExp(this.REGEX_LAYERSET).exec(ref)
 	if (layerSet) {
@@ -65,6 +78,7 @@ function getOutput(ref) {
 module.exports = {
 	getDocument,
 	getLayer,
+	getVariant,
 	getLayerSet,
 	getOutput,
 }

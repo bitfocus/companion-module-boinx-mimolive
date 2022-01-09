@@ -14,7 +14,7 @@ module.exports = {
 					id: 'document',
 					tooltip: 'Enter an index number, document ID or API endpoint',
 					default: '1',
-					regex: this.REGEX_DOCUMENT,
+					regex: `/${this.REGEX_DOCUMENT}/`,
 				},
 				{
 					type: 'dropdown',
@@ -41,7 +41,7 @@ module.exports = {
 					id: 'endpoint',
 					default: '',
 					tooltip: 'Enter the doc,layer index or API endpoint from the layer to control',
-					regex: this.REGEX_LAYER,
+					regex: `/${this.REGEX_LAYER}/`,
 				},
 				{
 					type: 'dropdown',
@@ -59,6 +59,32 @@ module.exports = {
 			},
 		}
 
+		actions['variant'] = {
+			label: 'Variant Actions',
+			options: [
+				{
+					type: 'textinput',
+					label: 'API Endpoint',
+					id: 'endpoint',
+					default: '',
+						tooltip: 'Enter the API endpoint from the variant to control',
+						regex: `/${this.REGEX_VARIANT}/`,
+				},
+				{
+					type: 'dropdown',
+					label: 'Action',
+					id: 'action',
+					choices: this.CHOICES_VARIANTACTIONS,
+					default: 'setLive',
+				},
+			],
+			callback: (action, bank) => {
+				let opt = action.options
+				//this.debug('Action options', opt)
+				this.sendGetRequest(opt.endpoint + '/' + opt.action)
+			},
+		}
+
 		actions['layerSet'] = {
 			label: 'Layer Set Recall',
 			options: [
@@ -68,7 +94,7 @@ module.exports = {
 					id: 'endpoint',
 					default: '',
 					tooltip: 'Enter the API endpoint from the layer to control',
-					regex: this.REGEX_LAYERSET,
+					regex: `/${this.REGEX_LAYERSET}/`,
 				},
 			],
 			callback: (action, bank) => {
@@ -85,7 +111,7 @@ module.exports = {
 					id: 'endpoint',
 					default: '',
 					tooltip: 'Enter the API endpoint from the layer to control',
-					regex: this.REGEX_OUTPUT,
+					regex: `/${this.REGEX_OUTPUT}/`,
 				},
 				{
 					type: 'dropdown',

@@ -90,7 +90,7 @@ exports.initAPI = function () {
 					break
 
 				case 'layers':
-					//this.debug('Message payload:', message)
+					// this.debug('Message payload:', message)
 					let layerIndex
 					switch (message.event) {
 						case 'added':
@@ -134,11 +134,53 @@ exports.initAPI = function () {
 					break
 
 				case 'variants':
+					// this.debug('Message payload:', message)
 					switch (message.event) {
 						case 'added':
+							try {
+								let layer = this.getLayer(message.data.relationships.layer.links.related)
+								if (layer) {
+									layer.variants.push( {
+										id: message.id,
+										label: message.data.attributes.name,
+										liveState: message.data.attributes['live-state'],
+									}	)
+								}
+							} catch (err) {
+								this.log('error', 'Error adding variant' + JSON.stringify(err))
+							}
+							break
 						case 'changed':
+							try {
+								let layer = this.getLayer(message.data.relationships.layer.links.related)
+								let variant = layer.variants.find(
+									(element) => element.id === message.data.id
+								)
+								if (variant) {
+									variant.label = message.data.attributes.name
+									variant.liveState = message.data.attributes['live-state']
+									this.checkFeedbacks('variantStatus')
+								}
+							} catch	(err) {
+								this.log('error', 'Error changing variant' + JSON.stringify(err))
+							}
 							break
 						case 'removed':
+							try {
+								for (doc in this.documents) {
+									for (layer in this.documents[doc].layers) {
+										let variantIndex = this.documents[doc].layers[layer].variants.findIndex(
+											(v) => v.id === message.id
+										)
+										if (variantIndex >= 0) {
+											this.documents[doc].layers[layer].variants.splice(variantIndex, 1)
+											this.checkFeedbacks('variantStatus')
+										}
+									}
+								}
+							} catch (err) {
+								this.log('error', 'Error removing variant' + JSON.stringify(err))
+							}
 							break
 					}
 					break
