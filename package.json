@@ -15,5 +15,13 @@
 		"test": "echo \"Error: no test specified\" && exit 1"
 	},
 	"author": "Stephen Harrison <stephen@redleopard.org>",
-	"license": "MIT"
+	"license": "MIT",
+	"homepage": "https://github.com/bitfocus/companion-module-boinx-mimolive#readme",
+	"bugs": {
+		"url": "https://github.com/bitfocus/companion-module-boinx-mimolive/issues"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/bitfocus/companion-module-boinx-mimolive.git"
+	}
 }
