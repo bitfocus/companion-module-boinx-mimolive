@@ -67,8 +67,8 @@ module.exports = {
 					label: 'API Endpoint',
 					id: 'endpoint',
 					default: '',
-						tooltip: 'Enter the API endpoint from the variant to control',
-						regex: `/${this.REGEX_VARIANT}/`,
+					tooltip: 'Enter the API endpoint from the variant to control',
+					regex: `/${this.REGEX_VARIANT}/`,
 				},
 				{
 					type: 'dropdown',
