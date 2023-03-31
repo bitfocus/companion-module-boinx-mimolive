@@ -1,4 +1,4 @@
-const instance_skel = require('../../../instance_skel')
+const { runEntrypoint, InstanceBase, InstanceStatus, Regex } = require('@companion-module/base')
 const api = require('./api')
 const actions = require('./actions')
 const variables = require('./variables')
@@ -12,9 +12,9 @@ let log
 /**
  * Companion instance class for Boinx Software mimoLive
  */
-class instance extends instance_skel {
-	constructor(system, id, config) {
-		super(system, id, config)
+class MimoLiveInstance extends InstanceBase {
+	constructor(internal) {
+		super(internal)
 
 		Object.assign(this, {
 			...api,
@@ -59,10 +59,10 @@ class instance extends instance_skel {
 		this.REGEX_LAYERSET = '^/api/v1/documents/([0-9]+)/layer-sets/([0-9-A-Z]+)$'
 	}
 
-	config_fields() {
+	getConfigFields() {
 		return [
 			{
-				type: 'text',
+				type: 'static-text',
 				id: 'info',
 				width: 12,
 				label: 'Information',
@@ -73,30 +73,31 @@ class instance extends instance_skel {
 				id: 'host',
 				label: 'Target IP',
 				width: 6,
-				regex: this.REGEX_IP,
+				regex: Regex.IP,
 			},
 		]
 	}
 
-	destroy() {
+	async destroy() {
 		if (this.socket !== undefined) {
 			this.socket.destroy()
 		}
 
-		this.debug('destroy', this.id)
+		this.log('debug', `destroy ${this.id}`)
 	}
 
-	init() {
+	async init(config) {
+		this.config = config
 		debug = this.debug
 		log = this.log
 
-		this.status(this.STATUS_WARNING, 'Connecting')
+		this.updateStatus(InstanceStatus.Connecting)
 
 		this.initAPI()
 
 		this.initVariables()
 		this.initFeedbacks()
-		this.actions()
+		this.initActions()
 		this.initPresets()
 	}
 
@@ -130,8 +131,8 @@ class instance extends instance_skel {
 	 * Set all the actions
 	 * @param  {} system
 	 */
-	actions(system) {
-		this.setActions(this.getActions())
+	initActions(system) {
+		this.setActionDefinitions(this.getActions())
 	}
 
 	sendCommand(cmd) {
@@ -142,7 +143,7 @@ class instance extends instance_skel {
 		}
 	}
 
-	updateConfig(config) {
+	async configUpdated(config) {
 		let resetConnection = false
 
 		if (this.config.host != config.host) {
@@ -157,4 +158,4 @@ class instance extends instance_skel {
 	}
 }
 
-exports = module.exports = instance
+runEntrypoint(MimoLiveInstance, [])

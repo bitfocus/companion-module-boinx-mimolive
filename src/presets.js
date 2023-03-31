@@ -1,40 +1,47 @@
+const { combineRgb } = require('@companion-module/base')
+
 exports.getPresets = function () {
-	let presets = []
-	const whiteColor = this.rgb(255, 255, 255)
-	const blackColor = this.rgb(0, 0, 0)
-	const previewFgColor = this.rgb(0, 204, 0)
-	const previewBgColor = this.rgb(0, 153, 51)
-	const startupColor = this.rgb(255, 152, 0)
-	const shutdownColor = this.rgb(255, 152, 0)
-	const liveColor = this.rgb(255, 0, 0)
-	const activeColor = this.rgb(0, 51, 204)
-	const offColor = this.rgb(68, 68, 68)
+	const presets = {}
+	const whiteColor = combineRgb(255, 255, 255)
+	const blackColor = combineRgb(0, 0, 0)
+	const previewFgColor = combineRgb(0, 204, 0)
+	const previewBgColor = combineRgb(0, 153, 51)
+	const startupColor = combineRgb(255, 152, 0)
+	const shutdownColor = combineRgb(255, 152, 0)
+	const liveColor = combineRgb(255, 0, 0)
+	const activeColor = combineRgb(0, 51, 204)
+	const offColor = combineRgb(68, 68, 68)
 
 	/**
 	 * Document
 	 */
-	presets.push({
+	presets['documentToggle'] = {
+		type: 'button',
 		category: 'Document',
-		label: 'Toggle Document',
+		name: 'Toggle Document',
 		bank: {
-			style: 'text',
 			text: 'Start Show',
 			size: '24',
 			color: previewFgColor,
 			bgcolor: blackColor,
 		},
-		actions: [
+		steps: [
 			{
-				action: 'document',
-				options: {
-					document: '1',
-					action: 'toggleLive',
-				},
+				down: [
+					{
+						actionId: 'document',
+						options: {
+							document: '1',
+							action: 'toggleLive',
+						},
+					},
+				],
+				up: [],
 			},
 		],
 		feedbacks: [
 			{
-				type: 'documentStatus',
+				feedbackId: 'documentStatus',
 				options: {
 					status: 'live',
 				},
@@ -44,7 +51,7 @@ exports.getPresets = function () {
 				},
 			},
 			{
-				type: 'documentStatus',
+				feedbackId: 'documentStatus',
 				options: {
 					status: 'shutdown',
 				},
@@ -54,11 +61,12 @@ exports.getPresets = function () {
 				},
 			},
 		],
-	})
+	}
 
-	presets.push({
+	presets['documentState'] = {
+		type: 'button',
 		category: 'Document',
-		label: 'Document State',
+		name: 'Document State',
 		bank: {
 			style: 'text',
 			text: `$(${this.shortname}:doc_1_status)`,
@@ -66,18 +74,23 @@ exports.getPresets = function () {
 			color: whiteColor,
 			bgcolor: offColor,
 		},
-		actions: [
+		steps: [
 			{
-				action: 'document',
-				options: {
-					document: '1',
-					action: 'toggleLive',
-				},
+				down: [
+					{
+						actionId: 'document',
+						options: {
+							document: '1',
+							action: 'toggleLive',
+						},
+					},
+				],
+				up: [],
 			},
 		],
 		feedbacks: [
 			{
-				type: 'documentStatus',
+				feedbackId: 'documentStatus',
 				options: {
 					status: 'live',
 				},
@@ -86,7 +99,7 @@ exports.getPresets = function () {
 				},
 			},
 			{
-				type: 'documentStatus',
+				feedbackId: 'documentStatus',
 				options: {
 					status: 'shutdown',
 				},
@@ -95,16 +108,17 @@ exports.getPresets = function () {
 				},
 			},
 		],
-	})
+	}
 
 	/**
 	 * Layer presets
 	 */
 	for (let doc = 1; doc <= 1; doc++) {
 		for (let layer = 1; layer <= 20; layer++) {
-			presets.push({
+			presets[`layer_${layer}`] = {
+				type: 'button',
 				category: `Layers`,
-				label: `Layer ${layer}`,
+				name: `Layer ${layer}`,
 				bank: {
 					style: 'text',
 					text: `$(${this.shortname}:layer_${doc}_${layer}_name)`,
@@ -112,18 +126,23 @@ exports.getPresets = function () {
 					color: whiteColor,
 					bgcolor: blackColor,
 				},
-				actions: [
+				steps: [
 					{
-						action: 'layer',
-						options: {
-							endpoint: `${doc},${layer}`,
-							action: `toggleLive`,
-						},
+						down: [
+							{
+								actionId: 'layer',
+								options: {
+									endpoint: `${doc},${layer}`,
+									action: `toggleLive`,
+								},
+							},
+						],
+						up: [],
 					},
 				],
 				feedbacks: [
 					{
-						type: 'layerStatus',
+						feedbackId: 'layerStatus',
 						options: {
 							layer: `${doc},${layer}`,
 							status: 'live',
@@ -133,7 +152,7 @@ exports.getPresets = function () {
 						},
 					},
 					/*{
-						type: 'layerStatus',
+						feedbackId: 'layerStatus',
 						options: {
 							layer: `${doc},${layer}`,
 							status: 'preview'
@@ -143,7 +162,7 @@ exports.getPresets = function () {
 						}
 					},*/
 					{
-						type: 'layerStatus',
+						feedbackId: 'layerStatus',
 						options: {
 							layer: `${doc},${layer}`,
 							status: 'shutdown',
@@ -153,16 +172,17 @@ exports.getPresets = function () {
 						},
 					},
 				],
-			})
+			}
 		}
 	}
 
 	/**
 	* Variant presets
 	*/
-	presets.push({
+	presets[`variant`] = {
+		type: 'button',
 		category: `Variants`,
-		label: `Variant`,
+		name: `Variant`,
 		bank: {
 			style: 'text',
 			text: `Variant`,
@@ -170,18 +190,23 @@ exports.getPresets = function () {
 			color: whiteColor,
 			bgcolor: blackColor,
 		},
-		actions: [
+		steps: [
 			{
-				action: 'variant',
-				options: {
-					endpoint: ``,
-					action: 'toggleLive',
-				},
+				down: [
+					{
+						actionId: 'variant',
+						options: {
+							endpoint: ``,
+							action: 'toggleLive',
+						},
+					},
+				],
+				up: [],
 			},
 		],
 		feedbacks: [
 			{
-				type: 'variantStatus',
+				feedbackId: 'variantStatus',
 				options: {
 					endpoint: ``,
 					status: 'live',
@@ -191,7 +216,7 @@ exports.getPresets = function () {
 				},
 			},
 			{
-				type: 'variantStatus',
+				feedbackId: 'variantStatus',
 				options: {
 					endpoint: ``,
 					status: 'shutdown',
@@ -201,14 +226,15 @@ exports.getPresets = function () {
 				},
 			},
 		],
-	})
+	}
 
 	/**
 	 * Layer set presets
 	 */
-	presets.push({
+	presets[`layerSet`] = {
+		type: 'button',
 		category: `Layer Sets`,
-		label: `Layer Set`,
+		name: `Layer Set`,
 		bank: {
 			style: 'text',
 			text: `Layer Set`,
@@ -216,17 +242,22 @@ exports.getPresets = function () {
 			color: whiteColor,
 			bgcolor: blackColor,
 		},
-		actions: [
+		steps: [
 			{
-				action: 'layerSet',
-				options: {
-					endpoint: ``,
-				},
+				down: [
+					{
+						actionId: 'layerSet',
+						options: {
+							endpoint: ``,
+						},
+					},
+				],
+				up: [],
 			},
 		],
 		feedbacks: [
 			{
-				type: 'layerSetStatus',
+				feedbackId: 'layerSetStatus',
 				options: {
 					endpoint: ``,
 				},
@@ -235,14 +266,15 @@ exports.getPresets = function () {
 				},
 			},
 		],
-	})
+	}
 
 	/**
 	 * Outputpresets
 	 */
-	presets.push({
+	presets[`output`] = {
+		type: 'button',
 		category: `Outputs`,
-		label: `Output`,
+		name: `Output`,
 		bank: {
 			style: 'text',
 			text: `Output`,
@@ -250,18 +282,23 @@ exports.getPresets = function () {
 			color: whiteColor,
 			bgcolor: offColor,
 		},
-		actions: [
+		steps: [
 			{
-				action: 'output',
-				options: {
-					endpoint: ``,
-					action: 'toggleLive',
-				},
+				down: [
+					{
+						actionId: 'output',
+						options: {
+							endpoint: ``,
+							action: 'toggleLive',
+						},
+					},
+				],
+				up: [],
 			},
 		],
 		feedbacks: [
 			{
-				type: 'outputStatus',
+				feedbackId: 'outputStatus',
 				options: {
 					endpoint: ``,
 					status: 'live',
@@ -271,7 +308,7 @@ exports.getPresets = function () {
 				},
 			},
 			{
-				type: 'outputStatus',
+				feedbackId: 'outputStatus',
 				options: {
 					endpoint: ``,
 					status: 'preview',
@@ -281,7 +318,7 @@ exports.getPresets = function () {
 				},
 			},
 			{
-				type: 'outputStatus',
+				feedbackId: 'outputStatus',
 				options: {
 					endpoint: ``,
 					status: 'startup',
@@ -291,7 +328,8 @@ exports.getPresets = function () {
 				},
 			},
 		],
-	})
+	}
 
 	return presets
 }
+					

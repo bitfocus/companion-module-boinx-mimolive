@@ -1,3 +1,4 @@
+const { InstanceStatus } = require('@companion-module/base')
 const WebSocket = require('ws')
 
 exports.initAPI = function () {
@@ -22,7 +23,7 @@ exports.initAPI = function () {
 				ws.send('keep alive')
 			}
 		} catch (err) {
-			this.log('debug', 'Error with handling socket' + JSON.stringify(err))
+			this.log('debug', `Error with handling socket ${JSON.stringify(err)}`)
 		}
 	}
 
@@ -31,19 +32,19 @@ exports.initAPI = function () {
 	 */
 	const startSocket = () => {
 		const url = 'ws://' + this.config.host + ':' + this.port + '/api/v1/socket'
-		this.debug('Connecting to server', url)
-		this.debug('New websocket')
+		this.log('debug', `Connecting to server ${url}`)
+		this.log('debug', 'New websocket')
 		this.socket = new WebSocket(url)
 
 		this.socket.on('open', () => {
-			this.status(this.STATUS_OK, 'Connected')
+			this.updateStatus(InstanceStatus.Ok, 'Connected')
 			this.log('debug', 'Connection to websocket established')
 			this.sendGetRequest('documents')
 		})
 
 		this.socket.on('message', (msg) => {
 			const message = JSON.parse(msg)
-			this.debug('Message received:', message.type, message.event)
+			this.log('debug', `Message received: ${message.type} ${message.event}`)
 			let parentDocument
 
 			switch (message.type) {
@@ -114,13 +115,13 @@ exports.initAPI = function () {
 								parentDocument.layers[layerIndex].activeVariant = message.data.relationships['active-variant'].data.id
 								parentDocument.layers[layerIndex].liveState = message.data.attributes['live-state']
 							}
-							this.debug('Layer:', message.data.attributes.name, 'is', message.data.attributes['live-state'])
+							this.log('debug', `Layer: ${message.data.attributes.name} is ${message.data.attributes['live-state']}`)
 							this.updateLayerVariables()
 							this.checkFeedbacks('layerStatus')
 							break
 						case 'removed':
 							for (doc in this.documents) {
-								this.debug('doc:', doc, typeof doc)
+								this.log('debug', `doc: ${doc} ${typeof doc}`)
 								let layerIndex = this.documents[doc].layers.findIndex((element) => element.id === message.id)
 								if (layerIndex >= 0) {
 									this.clearLayerVariables(parseInt(doc), layerIndex) // Clear out variable before we remove them
@@ -224,7 +225,10 @@ exports.initAPI = function () {
 							const parentDocument = this.documents.find(
 								(element) => element.id === message.data.relationships.document.data.id
 							)
-							//							this.debug('parentDocument', parentDocument)
+							if (parentDocument == undefined) {
+								break
+							}
+							this.log('debug', `parentDocument: ${parentDocument}`)
 							let outputIndex = parentDocument.outputs.findIndex((output) => output.id === message.id)
 							//							this.debug('OutputIndex:', outputIndex)
 							if (outputIndex >= 0) {
@@ -240,7 +244,7 @@ exports.initAPI = function () {
 							break
 						case 'removed':
 							for (doc in this.documents) {
-								this.debug('doc:', doc, typeof doc)
+								this.log('debug', `doc: ${doc} ${typeof doc}`)
 								let outputIndex = this.documents[doc].outputs.findIndex((element) => element.id === message.id)
 								if (outputIndex >= 0) {
 									this.documents[doc].layers.splice(outputIndex, 1)
@@ -255,11 +259,11 @@ exports.initAPI = function () {
 
 		this.socket.on('close', () => {
 			this.log('debug', 'Connection to websocket closed')
-			this.status(this.STATUS_ERROR, 'Waiting')
+			this.updateStatus(InstanceStatus.Disconnected, 'Waiting')
 		})
 
 		this.socket.on('error', (err) => {
-			this.status(this.STATUS_ERROR, err)
+			this.updateStatus(InstanceStatus.UnknownError, err)
 			this.log('error', 'Schedule Websocket API err:' + JSON.stringify(err))
 		})
 	}
@@ -277,8 +281,8 @@ exports.sendGetRequest = function (cmd) {
 		cmd = this.apiSlug + cmd
 	}
 	let url = `http://${this.config.host}:${this.port}${cmd}`
-	this.debug('REST GET:', url)
-	this.system.emit('rest_get', url, processResult.bind(this))
+	this.log('debug', `REST GET: ${url}`)
+//this.system.emit('rest_get', url, processResult.bind(this))
 }
 
 /**
@@ -296,7 +300,7 @@ processResult = function (err, result) {
 		} else {
 			this.log('error', 'general HTTP failure')
 		}
-		this.status(this.STATUS_ERROR, 'NOT CONNECTED')
+		this.updateStatus(InstanceStatus.ConnectionFailure, 'NOT CONNECTED')
 		if (this.pollingActive === 1) {
 			debug('Error Count:', this.errorCount)
 			this.errorCount++
@@ -309,21 +313,20 @@ processResult = function (err, result) {
 
 	switch (result.response.statusCode) {
 		case 200: // OK
-			this.status(this.STATUS_OK)
+			this.updateStatus(InstanceStatus.Ok)
 			const message = JSON.parse(result.data)
 			//			this.debug('Return data:', message);
 			const cmd = message.links.self.slice(8)
-			this.debug('Sent cmd:', cmd)
+			this.log('debug', `Sent cmd: ${cmd}`)
 
 			processData.bind(this)(cmd, message.data)
 			break
 		case 404: // Not found
-			//			this.status(this.STATUS_WARNING, 'Not found: ' + result.data.error)
 			this.log('warning', 'Not found: ' + result.data.error)
 			break
 		default:
 			// Unexpenses response
-			this.status(this.STATUS_ERROR, 'Unexpected HTTP status code: ' + result.response.statusCode)
+			this.updateStatus(InstanceStatus.UnknownError, 'Unexpected HTTP status code: ' + result.response.statusCode)
 			this.log('error', 'Unxspected HTTP status code: ' + result.response.statusCode)
 			break
 	}
@@ -368,7 +371,7 @@ processData = function (cmd, data) {
 		//		this.debug('Doc ID:', parentDocId)
 		//		this.debug(data)
 		for (layer in data) {
-			this.debug('Building Layer:', data[layer].attributes.name)
+			this.log('debug', `Building Layer: ${data[layer].attributes.name}`)
 			let index = data[layer].attributes.index
 			parentDoc.layers[index] = {
 				id: data[layer].id,
@@ -398,7 +401,7 @@ processData = function (cmd, data) {
 		//		this.debug('Doc ID:', parentDocId)
 		//		this.debug(data)
 		for (variant in data) {
-			this.debug('Variant:', variant)
+			this.log('debug', `Variant: ${variant}`)
 			parentLayer.variants.push({
 				id: data[variant].id,
 				label: data[variant].attributes.name,

@@ -1,68 +1,26 @@
+const { combineRgb } = require('@companion-module/base')
+
 exports.defineFeedbacks = function () {
 	const feedbacks = {}
 
-	const foregroundColor = {
-		type: 'colorpicker',
-		label: 'Foreground colour',
-		id: 'fg',
-		default: this.rgb(255, 255, 255),
-	}
-
 	const styleLive = {
-		color: this.rgb(255, 255, 255),
-		bgcolor: this.rgb(255, 0, 0),
+		color: combineRgb(255, 255, 255),
+		bgcolor: combineRgb(255, 0, 0),
 	}
 
 	const stylePreview = {
-		color: this.rgb(255, 255, 255),
-		bgcolor: this.rgb(0, 165, 44),
+		color: combineRgb(255, 255, 255),
+		bgcolor: combineRgb(0, 165, 44),
 	}
-
-	const backgroundColorLive = {
-		type: 'colorpicker',
-		label: 'Background colour (shutdown)',
-		id: 'bgs',
-		default: this.rgb(255, 0, 0),
+	
+	const styleActive = {
+		color: combineRgb(255, 255, 255),
+		bgcolor: combineRgb(0, 51, 204),
 	}
-
-	const backgroundColorStop = {
-		type: 'colorpicker',
-		label: 'Background colour (shutdown)',
-		id: 'bgs',
-		default: this.rgb(255, 152, 0),
-	}
-
-	const backgroundColorStart = {
-		type: 'colorpicker',
-		label: 'Background colour (starting)',
-		id: 'bgs',
-		default: this.rgb(255, 152, 0),
-	}
-
-	const backgroundColorPreview = {
-		type: 'colorpicker',
-		label: 'Background colour (preview)',
-		id: 'bgp',
-		default: this.rgb(0, 165, 44),
-	}
-
-	const backgroundColorOff = {
-		type: 'colorpicker',
-		label: 'Background colour (off)',
-		id: 'bgo',
-		default: this.rgb(0, 0, 0),
-	}
-
-	const backgroundColorActive = {
-		type: 'colorpicker',
-		label: 'Background colour',
-		id: 'bga',
-		default: this.rgb(0, 51, 204),
-	}
-
+	
 	feedbacks.documentStatus = {
 		type: 'boolean',
-		label: 'Document status',
+		name: 'Document status',
 		description: 'Change the style based on the status of a document',
 		options: [
 			{
@@ -85,19 +43,20 @@ exports.defineFeedbacks = function () {
 				],
 			},
 		],
-		style: styleLive,
-		callback: ({ options }, bank) => {
+		defaultStyle: styleLive,
+		callback: ({ options }) => {
 			const doc = this.getDocument(options.document)
 			//this.debug('Feedback - Document:', doc)
 			if (doc) {
 				return options.status === doc.liveState
 			}
+			return false
 		},
 	}
 
 	feedbacks.layerStatus = {
 		type: 'boolean',
-		label: 'Layer status',
+		name: 'Layer status',
 		description: 'Change the style based on the status of a layer',
 		options: [
 			{
@@ -121,19 +80,20 @@ exports.defineFeedbacks = function () {
 				],
 			},
 		],
-		style: styleLive,
-		callback: ({ options }, bank) => {
+		defaultStyle: styleLive,
+		callback: ({ options }) => {
 			const layer = this.getLayer(options.layer)
 			//this.debug('Feedback - Layer:', layer)
 			if (layer) {
 				return options.status === layer.liveState
 			}
+			return false
 		},
 	}
 	
 	feedbacks.variantStatus = {
 		type: 'boolean',
-		label: 'Variant status',
+		name: 'Variant status',
 		description: 'Change the style based on the status of a variant',
 		options: [
 			{
@@ -156,24 +116,21 @@ exports.defineFeedbacks = function () {
 					],
 			},
 		],
-		style: styleLive,
-		callback: ({ options }, bank) => {
+		defaultStyle: styleLive,
+		callback: ({ options }) => {
 			const variant = this.getVariant(options.variant)
 			// this.debug('Feedback - Variant:', variant)
 			if (variant) {
 				return options.status === variant.liveState
 			}
+			return false
 		},
 	}
 
 	feedbacks.layerSetStatus = {
 		type: 'boolean',
-		label: 'Layer Set active',
+		name: 'Layer Set active',
 		description: 'Change the style when a layer set is active',
-		style: {
-			color: this.rgb(255, 255, 255),
-			bgcolor: this.rgb(0, 51, 204),
-		},
 		options: [
 			{
 				type: 'textinput',
@@ -184,19 +141,19 @@ exports.defineFeedbacks = function () {
 				regex: this.REGEX_LAYERSET,
 			},
 		],
-		callback: ({ options }, bank) => {
+		defaultStyle: styleActive,
+		callback: ({ options }) => {
 			const layerSet = this.getLayerSet(options.endpoint)
 			if (layerSet.active) {
 				return true
-			} else {
-				return false
 			}
+			return false
 		},
 	}
 
 	feedbacks.outputStatus = {
 		type: 'boolean',
-		label: 'Output status',
+		name: 'Output status',
 		description: 'Change the style based on the status of an output',
 		options: [
 			{
@@ -220,13 +177,14 @@ exports.defineFeedbacks = function () {
 				],
 			},
 		],
-		style: styleLive,
-		callback: ({ options }, bank) => {
+		defaultStyle: styleLive,
+		callback: ({ options }) => {
 			const output = this.getOutput(options.output)
 			//			this.debug('Feedback - Output:', output)
 			if (output) {
 				return options.status === output.liveState
 			}
+			return false
 		},
 	}
 

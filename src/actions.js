@@ -6,7 +6,7 @@ module.exports = {
 		let actions = {}
 
 		actions['document'] = {
-			label: 'Document Actions',
+			name: 'Document Actions',
 			options: [
 				{
 					type: 'textinput',
@@ -24,7 +24,7 @@ module.exports = {
 					default: 'setLive',
 				},
 			],
-			callback: (action, bank) => {
+			callback: async (action) => {
 				const opt = action.options
 				//this.debug('Action options', opt)
 				const doc = this.getDocument(opt.document)
@@ -33,7 +33,7 @@ module.exports = {
 		}
 
 		actions['layer'] = {
-			label: 'Layer Actions',
+			name: 'Layer Actions',
 			options: [
 				{
 					type: 'textinput',
@@ -51,7 +51,7 @@ module.exports = {
 					default: 'setLive',
 				},
 			],
-			callback: (action, bank) => {
+			callback: async (action) => {
 				let opt = action.options
 				//this.debug('Action options', opt)
 				const layer = this.getLayer(opt.endpoint)
@@ -60,7 +60,7 @@ module.exports = {
 		}
 
 		actions['variant'] = {
-			label: 'Variant Actions',
+			name: 'Variant Actions',
 			options: [
 				{
 					type: 'textinput',
@@ -78,7 +78,7 @@ module.exports = {
 					default: 'setLive',
 				},
 			],
-			callback: (action, bank) => {
+			callback: async (action) => {
 				let opt = action.options
 				//this.debug('Action options', opt)
 				this.sendGetRequest(opt.endpoint + '/' + opt.action)
@@ -86,7 +86,7 @@ module.exports = {
 		}
 
 		actions['layerSet'] = {
-			label: 'Layer Set Recall',
+			name: 'Layer Set Recall',
 			options: [
 				{
 					type: 'textinput',
@@ -97,7 +97,7 @@ module.exports = {
 					regex: `/${this.REGEX_LAYERSET}/`,
 				},
 			],
-			callback: (action, bank) => {
+			callback: async (action) => {
 				this.sendGetRequest(action.options.endpoint + '/recall')
 			},
 		}
@@ -121,7 +121,7 @@ module.exports = {
 					default: 'setLive',
 				},
 			],
-			callback: (action, bank) => {
+			callback: async (action) => {
 				const opt = action.options
 				if (opt.action == 'toggleLive') {
 					output = this.getOutput(opt.endpoint)

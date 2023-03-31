@@ -4,27 +4,27 @@
 exports.updateVariableDefinitions = function () {
 	const variables = []
 
-	this.debug('Build document variables.')
+	this.log('debug', 'Build document variables.')
 	// document variables:
 	this.documents.forEach((doc, docIndex) => {
 		variables.push({
-			label: `Document ${docIndex + 1} Name`,
-			name: `doc_${docIndex + 1}_name`,
+			name: `Document ${docIndex + 1} Name`,
+			variableId: `doc_${docIndex + 1}_name`,
 		})
 
 		variables.push({
-			label: `Document ${docIndex + 1} Status`,
-			name: `doc_${docIndex + 1}_status`,
+			name: `Document ${docIndex + 1} Status`,
+			variableId: `doc_${docIndex + 1}_status`,
 		})
 
 		doc.layers.forEach((layer, index) => {
 			variables.push({
-				label: `Doc ${docIndex + 1} Layer ${index + 1} Name`,
-				name: `layer_${docIndex + 1}_${index + 1}_name`,
+				name: `Doc ${docIndex + 1} Layer ${index + 1} Name`,
+				variableId: `layer_${docIndex + 1}_${index + 1}_name`,
 			})
 			variables.push({
-				label: `Doc ${docIndex + 1} Layer ${index + 1} Active Variant`,
-				name: `layer_${docIndex + 1}_${index + 1}_activeVariant`,
+				name: `Doc ${docIndex + 1} Layer ${index + 1} Active Variant`,
+				variableId: `layer_${docIndex + 1}_${index + 1}_activeVariant`,
 			})
 		})
 	})
@@ -38,52 +38,60 @@ exports.updateVariableDefinitions = function () {
  * Update the values of static status variables.
  */
 exports.updateStatusVariables = function (docIndex) {
+	let list = {}
 	if (docIndex != undefined) {
-		this.debug('Updating document status:', docIndex)
-		this.setVariable(`doc_${docIndex + 1}_status`, capitalise(this.documents[docIndex].liveState))
+		this.log('debug', `Updating document status: ${docIndex}`)
+		list[`doc_${docIndex + 1}_status`] = capitalise(this.documents[docIndex].liveState)
+		this.setVariableValues(list)
 		return
 	}
 
-	this.debug('Updating all documents statuses')
+	this.log('debug', 'Updating all documents statuses')
 	this.documents.forEach((doc, docIndex) => {
-		this.setVariable(`doc_${docIndex + 1}_status`, capitalise(this.documents[docIndex].liveState))
+		list[`doc_${docIndex + 1}_status`] = capitalise(this.documents[docIndex].liveState)
 	})
+	this.setVariableValues(list)
 }
 
 /**
  * Update the values of dynamic playlist variables.
  */
 exports.updateLayerVariables = function () {
-	this.debug('Updating Layer Variables')
+	let list = {}
+	this.log('debug', 'Updating Layer Variables')
 	this.documents.forEach((doc, docIndex) => {
-		this.setVariable(`doc_${docIndex + 1}_name`, doc.label)
+		list[`doc_${docIndex + 1}_name`] = doc.label
 		//this.debug('-', doc.label)
 		doc.layers.forEach((layer, index) => {
-			this.setVariable(`layer_${docIndex + 1}_${index + 1}_name`, layer.label)
+			list[`layer_${docIndex + 1}_${index + 1}_name`] = layer.label
 			//this.debug('Layer:', layer)
 			if (layer.variants.length > 0) {
 				//this.debug('Active layer:', layer.variants)
 				let activeLayer = layer.variants.find((element) => element.id === layer.activeVariant)
 				if (activeLayer) {
-					this.setVariable(`layer_${docIndex + 1}_${index + 1}_activeVariant`, activeLayer.label)
+					list[`layer_${docIndex + 1}_${index + 1}_activeVariant`] = activeLayer.label
 				}
 			}
 			//this.debug('- -', layer.label)
 		})
 	})
+	this.setVariableValues(list)
 }
 
 exports.clearLayerVariables = function (docIndex, layerIndex) {
-	this.debug('Clearing Layer Variables', docIndex, layerIndex)
+	let list = {}
+	this.log('debug', `Clearing Layer Variables ${docIndex} ${layerIndex}`)
 	if (layerIndex) {
-		this.setVariable(`layer_${docIndex + 1}_${layerIndex + 1}_name`, '-')
+		list[`layer_${docIndex + 1}_${layerIndex + 1}_name`] = '-'
+		this.serVariableValues(list)
 		return
 	}
 
-	this.setVariable(`doc_${docIndex + 1}_name`, '-')
+	list[`doc_${docIndex + 1}_name`] = '-'
 	this.documents[docIndex].layers.forEach((layer, index) => {
-		this.setVariable(`layer_${docIndex + 1}_${index + 1}_name`, '-')
+		list[`layer_${docIndex + 1}_${index + 1}_name`] = '-'
 	})
+	this.setVariableValues(list)
 }
 
 renderTime = function (seconds) {
