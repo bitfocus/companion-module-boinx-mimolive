@@ -8,6 +8,10 @@ export default {
 			this.socket.close()
 			delete this.socket
 		}
+		if (this.pollApi) {
+			clearInterval(this.pollApi)
+			delete this.pollApi
+		}
 
 		const retrySocket = () => {
 			const ws = this.socket

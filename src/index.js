@@ -82,6 +82,9 @@ class MimoLiveInstance extends InstanceBase {
 		if (this.socket !== undefined) {
 			this.socket.destroy()
 		}
+		if (this.pollApi) {
+			clearInterval(this.pollApi)
+		}
 
 		this.log('debug', `destroy ${this.id}`)
 	}
@@ -153,7 +156,7 @@ class MimoLiveInstance extends InstanceBase {
 		this.updateGotOptions()
 
 		if (resetConnection === true || this.socket === undefined) {
-			this.initTCP()
+			this.initAPI()
 		}
 	}
 }
