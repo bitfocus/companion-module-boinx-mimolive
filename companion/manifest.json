@@ -21,11 +21,6 @@
 		"entrypoint": "../src/index.js"
 	},
 	"manufacturer": "Boinx",
-	"products": [
-		"mimoLive"
-	],
-	"keywords": [
-		"Software",
-		"Vision Mixer"
-	]
+	"products": ["mimoLive"],
+	"keywords": ["Software", "Vision Mixer"]
 }

@@ -1,8 +1,8 @@
-module.exports = {
+export default {
 	/**
 	 * INTERNAL: Get the available actions.
 	 */
-	getActions() {
+	getActions: function () {
 		let actions = {}
 
 		actions['document'] = {

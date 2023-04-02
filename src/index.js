@@ -1,12 +1,11 @@
-const { runEntrypoint, InstanceBase, InstanceStatus, Regex } = require('@companion-module/base')
-const api = require('./api')
-const actions = require('./actions')
-const variables = require('./variables')
-const feedbacks = require('./feedbacks')
-const presets = require('./presets')
-const utils = require('./utils')
+import { runEntrypoint, InstanceBase, InstanceStatus, Regex } from '@companion-module/base'
+import api from './api.js'
+import actions from './actions.js'
+import variables from './variables.js'
+import feedbacks from './feedbacks.js'
+import presets from './presets.js'
+import utils from './utils.js'
 
-let debug
 let log
 
 /**
@@ -26,7 +25,8 @@ class MimoLiveInstance extends InstanceBase {
 		})
 
 		this.port = 8989 // Fixed port
-		this.apiSlug = '/api/v1/' // Needed for all api calls
+		this.apiSlug = 'api/v1/' // Needed for all api calls
+		this.gotOptions = undefined // Options for got used by API calls
 
 		this.documents = []
 
@@ -88,11 +88,10 @@ class MimoLiveInstance extends InstanceBase {
 
 	async init(config) {
 		this.config = config
-		debug = this.debug
 		log = this.log
 
 		this.updateStatus(InstanceStatus.Connecting)
-
+		this.updateGotOptions()
 		this.initAPI()
 
 		this.initVariables()
@@ -151,6 +150,7 @@ class MimoLiveInstance extends InstanceBase {
 		}
 
 		this.config = config
+		this.updateGotOptions()
 
 		if (resetConnection === true || this.socket === undefined) {
 			this.initTCP()
