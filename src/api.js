@@ -97,7 +97,7 @@ export default {
 						break
 
 					case 'layers':
-						// this.debug('Message payload:', message)
+						// console.log('Message payload:', message)
 						let layerIndex
 						switch (message.event) {
 							case 'added':
@@ -114,18 +114,21 @@ export default {
 										variants: [],
 										activeVariant: message.data.relationships['active-variant'].data.id,
 										liveState: message.data.attributes['live-state'],
+										volume: message.data.attributes['volume'],
 									}
 								} else {
 									parentDocument.layers[layerIndex].id = message.id
 									parentDocument.layers[layerIndex].label = message.data.attributes.name
 									parentDocument.layers[layerIndex].activeVariant = message.data.relationships['active-variant'].data.id
 									parentDocument.layers[layerIndex].liveState = message.data.attributes['live-state']
+									parentDocument.layers[layerIndex].volume = message.data.attributes['volume']
 								}
 								this.log('debug', `Layer: ${message.data.attributes.name} is ${message.data.attributes['live-state']}`)
 								this.updateLayerVariables()
 								this.checkFeedbacks('layerStatus')
 								break
 							case 'removed':
+								let doc
 								for (doc in this.documents) {
 									this.log('debug', `doc: ${doc} ${typeof doc}`)
 									let layerIndex = this.documents[doc].layers.findIndex((element) => element.id === message.id)
@@ -141,7 +144,7 @@ export default {
 						break
 
 					case 'variants':
-						// this.debug('Message payload:', message)
+						console.log('Message payload:', message)
 						switch (message.event) {
 							case 'added':
 								try {
@@ -172,7 +175,9 @@ export default {
 								break
 							case 'removed':
 								try {
+									let doc
 									for (doc in this.documents) {
+										let layer
 										for (layer in this.documents[doc].layers) {
 											let variantIndex = this.documents[doc].layers[layer].variants.findIndex(
 												(v) => v.id === message.id
@@ -191,7 +196,7 @@ export default {
 						break
 
 					case 'layer-sets':
-						//this.debug('Message payload:', message)
+						// this.debug('Message payload:', message)
 						switch (message.event) {
 							case 'added':
 							case 'changed':
@@ -213,6 +218,7 @@ export default {
 								this.checkFeedbacks('layerSetStatus')
 								break
 							case 'removed':
+								let doc
 								for (doc in this.documents) {
 									let setIndex = this.documents[doc].layerSets.findIndex((element) => element.id === message.id)
 									if (setIndex >= 0) {
@@ -225,7 +231,7 @@ export default {
 						break
 
 					case 'output-destinations':
-						//this.debug('Message payload:', message)
+						// this.debug('Message payload:', message)
 						switch (message.event) {
 							case 'added':
 							case 'changed':
@@ -237,7 +243,7 @@ export default {
 								}
 								this.log('debug', `parentDocument: ${parentDocument}`)
 								let outputIndex = parentDocument.outputs.findIndex((output) => output.id === message.id)
-								//							this.debug('OutputIndex:', outputIndex)
+								// this.debug('OutputIndex:', outputIndex)
 								if (outputIndex >= 0) {
 									parentDocument.outputs.splice(outputIndex, 1)
 								}
@@ -250,6 +256,7 @@ export default {
 								this.checkFeedbacks('outputStatus')
 								break
 							case 'removed':
+								let doc
 								for (doc in this.documents) {
 									this.log('debug', `doc: ${doc} ${typeof doc}`)
 									let outputIndex = this.documents[doc].outputs.findIndex((element) => element.id === message.id)
@@ -378,7 +385,7 @@ export default {
 		}
 
 		if (cmd.endsWith('/layers')) {
-			console.log(data[3].attributes)
+			// console.log(data[3].attributes)
 			const parentDocId = RegExp(/^documents\/(\d+)\/layers$/).exec(cmd)[1]
 			const parentDoc = this.documents.find((element) => element.id === parentDocId)
 			//	 this.debug('Doc ID:', parentDocId)
@@ -396,6 +403,7 @@ export default {
 					// liveVariant: data[layer].relationships['live-variant'].data.id,
 					liveVariant: '',
 					liveState: data[layer].attributes['live-state'],
+					volume: data[layer].attributes['volume'],
 				}
 				this.sendGetRequest(`documents/${parentDocId}/layers/${data[layer].id}/variants`)
 			}

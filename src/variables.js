@@ -27,6 +27,12 @@ export default {
 					name: `Doc ${docIndex + 1} Layer ${index + 1} Active Variant`,
 					variableId: `layer_${docIndex + 1}_${index + 1}_activeVariant`,
 				})
+//			if (layer.volume != null) {
+//				variables.push({
+//					name: `Doc ${docIndex + 1} Layer ${index + 1} Volume`,
+//					variableId: `layer_${docIndex + 1}_${index + 1}_volume`,
+//				})
+//			}
 			})
 		})
 
@@ -73,6 +79,9 @@ export default {
 						list[`layer_${docIndex + 1}_${index + 1}_activeVariant`] = activeLayer.label
 					}
 				}
+//			if (layer.volume != null) {
+//				list[`layer_${docIndex + 1}_${index + 1}_volume`] = layer.volume
+//			}
 				//this.debug('- -', layer.label)
 			})
 		})
