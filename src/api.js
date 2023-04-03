@@ -114,14 +114,14 @@ export default {
 										variants: [],
 										activeVariant: message.data.relationships['active-variant'].data.id,
 										liveState: message.data.attributes['live-state'],
-										volume: message.data.attributes['volume'],
+										volume: parseInt(message.data.attributes['volume'] * 100),
 									}
 								} else {
 									parentDocument.layers[layerIndex].id = message.id
 									parentDocument.layers[layerIndex].label = message.data.attributes.name
 									parentDocument.layers[layerIndex].activeVariant = message.data.relationships['active-variant'].data.id
 									parentDocument.layers[layerIndex].liveState = message.data.attributes['live-state']
-									parentDocument.layers[layerIndex].volume = message.data.attributes['volume']
+									parentDocument.layers[layerIndex].volume = parseInt(message.data.attributes['volume'] * 100)
 								}
 								this.log('debug', `Layer: ${message.data.attributes.name} is ${message.data.attributes['live-state']}`)
 								this.updateLayerVariables()
@@ -300,9 +300,9 @@ export default {
 	},
 
 	/**
-	 * Send a REST GET request to the player and handle errorcodes
-	 * @param  {} cmd
-	 */
+	* Send a REST GET request to the player and handle errorcodes
+	* @param  {} cmd
+	*/
 	sendGetRequest: async function (cmd) {
 		// Trim off any leading / characters
 		while (cmd.startsWith('/')) {
@@ -313,6 +313,7 @@ export default {
 			cmd = this.apiSlug + cmd
 		}
 		this.log('debug', `REST GET: ${cmd}`)
+		this.gotOptions.method = 'GET'
 		let response
 		try {
 			response = await got(cmd, undefined, this.gotOptions)
@@ -323,7 +324,36 @@ export default {
 		}
 		this.processResult(response)
 	},
-
+	
+	/**
+	* Send a REST PUT request to the player and handle errorcodes
+	* @param  {} cmd
+	* @param	{} payload
+	*/
+	sendPutRequest: async function (cmd, payload) {
+		// Trim off any leading / characters
+		while (cmd.startsWith('/')) {
+			cmd = cmd.slice(1)
+		}
+		// Append the API slug if it is not already present
+		if (cmd.startsWith(this.apiSlug) == false) {
+			cmd = this.apiSlug + cmd
+		}
+		this.log('debug', `REST PUT: ${cmd}`)
+		this.gotOptions.method = 'PUT'
+		this.gotOptions.json = payload
+		let response
+		try {
+			response = await got(cmd, undefined, this.gotOptions)
+		} catch (error) {
+			console.log(error.message)
+			this.processError(error)
+			return
+		}
+		this.gotOptions.json = undefined
+		this.processResult(response)
+	},
+	
 	/**
 	 * INTERNAL: Callback for REST calls to process the return
 	 *
@@ -403,7 +433,7 @@ export default {
 					// liveVariant: data[layer].relationships['live-variant'].data.id,
 					liveVariant: '',
 					liveState: data[layer].attributes['live-state'],
-					volume: data[layer].attributes['volume'],
+					volume: parseInt(data[layer].attributes['volume'] * 100),
 				}
 				this.sendGetRequest(`documents/${parentDocId}/layers/${data[layer].id}/variants`)
 			}
@@ -480,7 +510,8 @@ export default {
 	},
 
 	processError: function (error) {
-		console.log(JSON.stringify(error))
+		// console.log('---------ERROR--------')
+		// console.log(error)
 		if (error !== null) {
 			if (error.code !== undefined) {
 				this.log('error', 'Connection failed (' + error.message + ')')

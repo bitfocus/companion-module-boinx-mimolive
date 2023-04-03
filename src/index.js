@@ -51,6 +51,11 @@ class MimoLiveInstance extends InstanceBase {
 			{ id: 'setOff', label: 'Set Off' },
 			{ id: 'toggleLive', label: 'Toggle Live' },
 		]
+		this.CHOICES_AUDIOADJUSTMENT = [
+			{ id: 'set', label: 'Set' },
+			{ id: 'increase', label: 'Increase' },
+			{ id: 'decrease', label: 'Decrease' },
+		]
 
 		this.REGEX_DOCUMENT = '(^[0-9]+$)|(/api/v1/documents/([0-9]+))'
 		this.REGEX_LAYER = '^([0-9]+,[0-9]+)|(/api/v1/documents/([0-9]+)/layers/([0-9-A-Z]+))$'
