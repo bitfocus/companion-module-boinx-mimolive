@@ -115,6 +115,7 @@ export default {
 										activeVariant: message.data.relationships['active-variant'].data.id,
 										liveState: message.data.attributes['live-state'],
 										volume: message.data.attributes['volume'],
+										index: message.data.attributes.index
 									}
 								} else {
 									parentDocument.layers[layerIndex].id = message.id
@@ -122,6 +123,7 @@ export default {
 									parentDocument.layers[layerIndex].activeVariant = message.data.relationships['active-variant'].data.id
 									parentDocument.layers[layerIndex].liveState = message.data.attributes['live-state']
 									parentDocument.layers[layerIndex].volume = message.data.attributes['volume']
+									parentDocument.layers[layerIndex].index = message.data.attributes.index
 								}
 								this.log('debug', `Layer: ${message.data.attributes.name} is ${message.data.attributes['live-state']}`)
 								this.updateLayerVariables()
@@ -300,9 +302,9 @@ export default {
 	},
 
 	/**
-	 * Send a REST GET request to the player and handle errorcodes
-	 * @param  {} cmd
-	 */
+	* Send a REST GET request to the player and handle errorcodes
+	* @param  {} cmd
+	*/
 	sendGetRequest: async function (cmd) {
 		// Trim off any leading / characters
 		while (cmd.startsWith('/')) {
@@ -324,12 +326,12 @@ export default {
 		}
 		this.processResult(response)
 	},
-
+	
 	/**
-	 * Send a REST PUT request to the player and handle errorcodes
-	 * @param  {} cmd
-	 * @param	{} payload
-	 */
+	* Send a REST PUT request to the player and handle errorcodes
+	* @param  {} cmd
+	* @param	{} payload
+	*/
 	sendPutRequest: async function (cmd, payload) {
 		// Trim off any leading / characters
 		while (cmd.startsWith('/')) {
@@ -353,7 +355,7 @@ export default {
 		this.gotOptions.json = undefined
 		this.processResult(response)
 	},
-
+	
 	/**
 	 * INTERNAL: Callback for REST calls to process the return
 	 *
@@ -434,6 +436,7 @@ export default {
 					liveVariant: '',
 					liveState: data[layer].attributes['live-state'],
 					volume: data[layer].attributes['volume'],
+					index: data[layer].attributes.index
 				}
 				this.sendGetRequest(`documents/${parentDocId}/layers/${data[layer].id}/variants`)
 			}

@@ -187,10 +187,11 @@ export default {
 						newVol = parseFloat(vol) / 100
 						break
 				}
-				console.log(`Volume: ${newVol}`)
 				const payload = { volume: newVol }
 				this.sendPutRequest(`documents/${layer.document}/layers/${layer.id}`, payload)
 				//			layer.volume = newVol
+				const parentDoc = this.documents.find((element) => element.id === layer.document)
+				parentDoc.layers[layer.index].volume = newVol
 			},
 		}
 
