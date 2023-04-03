@@ -114,14 +114,14 @@ export default {
 										variants: [],
 										activeVariant: message.data.relationships['active-variant'].data.id,
 										liveState: message.data.attributes['live-state'],
-										volume: parseInt(message.data.attributes['volume'] * 100),
+										volume: message.data.attributes['volume'],
 									}
 								} else {
 									parentDocument.layers[layerIndex].id = message.id
 									parentDocument.layers[layerIndex].label = message.data.attributes.name
 									parentDocument.layers[layerIndex].activeVariant = message.data.relationships['active-variant'].data.id
 									parentDocument.layers[layerIndex].liveState = message.data.attributes['live-state']
-									parentDocument.layers[layerIndex].volume = parseInt(message.data.attributes['volume'] * 100)
+									parentDocument.layers[layerIndex].volume = message.data.attributes['volume']
 								}
 								this.log('debug', `Layer: ${message.data.attributes.name} is ${message.data.attributes['live-state']}`)
 								this.updateLayerVariables()
@@ -300,9 +300,9 @@ export default {
 	},
 
 	/**
-	* Send a REST GET request to the player and handle errorcodes
-	* @param  {} cmd
-	*/
+	 * Send a REST GET request to the player and handle errorcodes
+	 * @param  {} cmd
+	 */
 	sendGetRequest: async function (cmd) {
 		// Trim off any leading / characters
 		while (cmd.startsWith('/')) {
@@ -324,12 +324,12 @@ export default {
 		}
 		this.processResult(response)
 	},
-	
+
 	/**
-	* Send a REST PUT request to the player and handle errorcodes
-	* @param  {} cmd
-	* @param	{} payload
-	*/
+	 * Send a REST PUT request to the player and handle errorcodes
+	 * @param  {} cmd
+	 * @param	{} payload
+	 */
 	sendPutRequest: async function (cmd, payload) {
 		// Trim off any leading / characters
 		while (cmd.startsWith('/')) {
@@ -353,7 +353,7 @@ export default {
 		this.gotOptions.json = undefined
 		this.processResult(response)
 	},
-	
+
 	/**
 	 * INTERNAL: Callback for REST calls to process the return
 	 *
@@ -433,7 +433,7 @@ export default {
 					// liveVariant: data[layer].relationships['live-variant'].data.id,
 					liveVariant: '',
 					liveState: data[layer].attributes['live-state'],
-					volume: parseInt(data[layer].attributes['volume'] * 100),
+					volume: data[layer].attributes['volume'],
 				}
 				this.sendGetRequest(`documents/${parentDocId}/layers/${data[layer].id}/variants`)
 			}

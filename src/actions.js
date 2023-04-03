@@ -143,7 +143,7 @@ export default {
 				this.sendGetRequest(opt.endpoint + '/' + opt.action)
 			},
 		}
-		
+
 		actions['audioLayer'] = {
 			name: 'Audio - Set Layer Volume',
 			description: 'Set or adjust the volume of a layer',
@@ -169,7 +169,7 @@ export default {
 					id: 'volume',
 					default: '100',
 					tooltip: 'Volume range is 0-100. Enter a number of variable',
-				}
+				},
 			],
 			callback: async (action) => {
 				const opt = action.options
@@ -178,18 +178,20 @@ export default {
 				let newVol
 				switch (opt.adjustment) {
 					case 'increase':
-						newVol = (parseFloat(layer.volume) + parseFloat(vol)) / 100
-						break;
+						newVol = layer.volume + parseFloat(vol) / 100
+						break
 					case 'decrease':
-						newVol = (parseFloat(layer.volume) - parseFloat(vol)) / 100
-						break;
+						newVol = layer.volume - parseFloat(vol) / 100
+						break
 					default:
 						newVol = parseFloat(vol) / 100
-						break;
+						break
 				}
-				const payload = JSON.parse(`{ "volume": ${newVol} }`)
+				console.log(`Volume: ${newVol}`)
+				const payload = { volume: newVol }
 				this.sendPutRequest(`documents/${layer.document}/layers/${layer.id}`, payload)
-			}
+				//			layer.volume = newVol
+			},
 		}
 
 		actions['endpoint'] = {

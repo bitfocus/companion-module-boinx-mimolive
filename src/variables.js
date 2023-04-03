@@ -80,7 +80,7 @@ export default {
 					}
 				}
 				if (layer.volume != null) {
-					list[`layer_${docIndex + 1}_${index + 1}_volume`] = layer.volume
+					list[`layer_${docIndex + 1}_${index + 1}_volume`] = (layer.volume * 100).toFixed()
 				}
 				//this.debug('- -', layer.label)
 			})
