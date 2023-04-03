@@ -41,7 +41,7 @@ export default {
 	updateStatusVariables: function (docIndex) {
 		let list = {}
 		if (docIndex != undefined) {
-			this.log('debug', `Updating document status: ${docIndex}`)
+			//		this.log('debug', `Updating document status: ${docIndex}`)
 			list[`doc_${docIndex + 1}_status`] = this.capitalise(this.documents[docIndex].liveState)
 			this.setVariableValues(list)
 			return

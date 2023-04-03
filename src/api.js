@@ -50,12 +50,12 @@ export default {
 
 			this.socket.on('message', (msg) => {
 				const message = JSON.parse(msg)
-				this.log('debug', `Message received: ${message.type} ${message.event}`)
+				// this.log('debug', `Message received: ${message.type} ${message.event}`)
 				let parentDocument
 
 				switch (message.type) {
 					case 'documents':
-						//this.debug('Document:', message)
+						// this.debug('Document:', message)
 						const docIndex = this.documents.findIndex((doc) => doc.id === message.id)
 						switch (message.event) {
 							case 'added':
@@ -75,13 +75,13 @@ export default {
 								this.updateVariableDefinitions()
 								break
 							case 'changed':
-								this.log('debug', 'Document changed: ' + message.data.attributes.name)
+								// this.log('debug', 'Document changed: ' + message.data.attributes.name)
 
 								if (docIndex >= 0) {
 									this.documents[docIndex].label = message.data.attributes.name
 									this.documents[docIndex].liveState = message.data.attributes['live-state']
 
-									//this.debug('Changed document:', this.documents[docIndex])
+									// this.debug('Changed document:', this.documents[docIndex])
 									this.updateStatusVariables(docIndex)
 									this.checkFeedbacks('documentStatus')
 								}
@@ -350,8 +350,8 @@ export default {
 	 * @param  {Object} data - response data
 	 */
 	processData: function (cmd, data) {
-		//	this.log('debug', `Sent cmd: ${cmd}`);
-		//	this.log('debug', `Return data: ${data}`);
+		// console.log(`Sent cmd: ${cmd}`)
+		// console.log(`Return data: ${JSON.stringify(data)}`);
 
 		if (cmd == 'documents') {
 			this.documents = []
@@ -368,8 +368,8 @@ export default {
 				this.sendGetRequest(`documents/${data[i].id}/layers`)
 				this.sendGetRequest(`documents/${data[i].id}/layer-sets`)
 				this.sendGetRequest(`documents/${data[i].id}/output-destinations`)
-				//		this.updateStatusVariables(data)
-				//			this.debug('Document:', this.documents[i])
+				//	 this.updateStatusVariables(data)
+				//	 this.debug('Document:', this.documents[i])
 				this.initActions()
 			}
 			this.updateVariableDefinitions()
@@ -378,11 +378,11 @@ export default {
 		}
 
 		if (cmd.endsWith('/layers')) {
-			//		this.debug('Layers:', data)
+			console.log(data[3].attributes)
 			const parentDocId = RegExp(/^documents\/(\d+)\/layers$/).exec(cmd)[1]
 			const parentDoc = this.documents.find((element) => element.id === parentDocId)
-			//		this.debug('Doc ID:', parentDocId)
-			//		this.debug(data)
+			//	 this.debug('Doc ID:', parentDocId)
+			//	 this.debug(data)
 			let layer
 			for (layer in data) {
 				this.log('debug', `Building Layer: ${data[layer].attributes.name}`)
@@ -393,27 +393,27 @@ export default {
 					document: parentDoc.id,
 					variants: [],
 					activeVariant: data[layer].relationships['active-variant'].data.id,
-					//				liveVariant: data[layer].relationships['live-variant'].data.id,
+					// liveVariant: data[layer].relationships['live-variant'].data.id,
 					liveVariant: '',
 					liveState: data[layer].attributes['live-state'],
 				}
 				this.sendGetRequest(`documents/${parentDocId}/layers/${data[layer].id}/variants`)
 			}
-			//		this.debug('Layers:', parentDoc)
+			// this.debug('Layers:', parentDoc)
 			this.updateVariableDefinitions()
 			this.checkFeedbacks('layerStatus')
 			return
 		}
 
 		if (cmd.endsWith('/variants')) {
-			//		this.debug('Variants:', data)
+			//	 console.log(data)
 			let allIDs = RegExp(/^documents\/(\d+)\/layers\/([0-9-A-Z]+)\/variants$/).exec(cmd)
 			const parentDocId = allIDs[1]
 			const layerId = allIDs[2]
 			const parentDoc = this.documents.find((element) => element.id === parentDocId)
 			const parentLayer = parentDoc.layers.find((element) => element.id === layerId)
-			//		this.debug('Doc ID:', parentDocId)
-			//		this.debug(data)
+			//	 this.debug('Doc ID:', parentDocId)
+			//	 this.debug(data)
 			let variant
 			for (variant in data) {
 				this.log('debug', `Variant: ${variant}`)
@@ -430,34 +430,34 @@ export default {
 		}
 
 		if (cmd.endsWith('/layer-sets')) {
-			//		this.debug('Layers:', data)
+			//	 this.debug('Layers:', data)
 			const parentDocId = RegExp(/^documents\/(\d+)\/layer-sets$/).exec(cmd)[1]
 			const parentDoc = this.documents.find((element) => element.id === parentDocId)
-			//		this.debug('Doc ID:', parentDocId)
-			//		this.debug(data)
+			// 	this.debug('Doc ID:', parentDocId)
+			//	 this.debug(data)
 			let layerSet
 			for (layerSet in data) {
-				//			this.debug('Layer Set:', data[layerSet])
+				// this.debug('Layer Set:', data[layerSet])
 				parentDoc.layerSets.push({
 					id: data[layerSet].id,
 					label: data[layerSet].attributes.name,
 					active: data[layerSet].attributes['active'],
 				})
 			}
-			//		this.debug('Layers:', parentDoc)
+			//	 this.debug('Layers:', parentDoc)
 			this.checkFeedbacks('layerSetStatus')
 			return
 		}
 
 		if (cmd.endsWith('/output-destinations')) {
-			//		this.debug('Layers:', data)
+			//	 this.debug('Layers:', data)
 			const parentDocId = RegExp(/^documents\/(\d+)\/output-destinations$/).exec(cmd)[1]
 			const parentDoc = this.documents.find((element) => element.id === parentDocId)
-			//		this.debug('Doc ID:', parentDocId)
-			//		this.debug(data)
+			//	 this.debug('Doc ID:', parentDocId)
+			//	 this.debug(data)
 			let output
 			for (output in data) {
-				//			this.debug('Output:', data[output])
+				// this.debug('Output:', data[output])
 				parentDoc.outputs.push({
 					id: data[output].id,
 					label: data[output].attributes.title,
@@ -465,7 +465,7 @@ export default {
 					liveState: data[output].attributes['live-state'],
 				})
 			}
-			//		this.debug('Layers:', parentDoc)
+			// this.debug('Layers:', parentDoc)
 			this.checkFeedbacks('outputStatus')
 			return
 		}

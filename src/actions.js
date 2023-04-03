@@ -7,6 +7,7 @@ export default {
 
 		actions['document'] = {
 			name: 'Document Actions',
+			description: `Control a Document's live status`,
 			options: [
 				{
 					type: 'textinput',
@@ -34,6 +35,7 @@ export default {
 
 		actions['layer'] = {
 			name: 'Layer Actions',
+			description: `Control a Layer's live status, cycle through Variants`,
 			options: [
 				{
 					type: 'textinput',
@@ -61,6 +63,7 @@ export default {
 
 		actions['variant'] = {
 			name: 'Variant Actions',
+			description: `Control a Variant's live status`,
 			options: [
 				{
 					type: 'textinput',
@@ -103,7 +106,8 @@ export default {
 		}
 
 		actions['output'] = {
-			label: 'Output Actions',
+			name: 'Output Actions',
+			description: `Control an Output's live status`,
 			options: [
 				{
 					type: 'textinput',
@@ -137,6 +141,26 @@ export default {
 				}
 
 				this.sendGetRequest(opt.endpoint + '/' + opt.action)
+			},
+		}
+
+		actions['endpoint'] = {
+			name: 'Generic Endpoint',
+			description: 'Trigger any API endpoint from your document',
+			options: [
+				{
+					type: 'textinput',
+					label: 'API Endpoint',
+					id: 'endpoint',
+					default: '',
+					tooltip: 'Enter the API endpoint to trigger',
+					regex: `/${this.REGEX_ENDPOINT}/`,
+				},
+			],
+			callback: async (action) => {
+				const opt = action.options
+				this.log('debug', `Endpoint: ${opt.endpoint}`)
+				this.sendGetRequest(opt.endpoint)
 			},
 		}
 
