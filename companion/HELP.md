@@ -14,6 +14,8 @@ mimoLive records and streams simultaneously to various services and locations.
 - Layer Actions (Set Live, Set Off, Toggle Live, Cycle Through Variants)
 - Output Actions (Set Live, Set Off, Toggle Live)
 - Layer Set Recall
+- Set Layer Volume
+- Trigger a Generic Endpoint
 
 ### Supported feedback
 
@@ -21,6 +23,7 @@ mimoLive records and streams simultaneously to various services and locations.
 - Layer Status
 - Output Status
 - Layer Set Status
+- Variant Status
 
 ### Supported button variables
 
@@ -30,6 +33,7 @@ Dynamic variables are generated for all open documents, and can be accessed usin
 - Document live status
 - Layer name
 - Layer active variant name
+- Layer volume (when present)
 
 ### Usage
 
