@@ -15,7 +15,7 @@
 	"dependencies": {
 		"@companion-module/base": "~1.4.0",
 		"got": "~12.6.0",
-		"ws": "~8.13.0"
+		"ws": "~8.17.1"
 	},
 	"devDependencies": {
 		"@companion-module/tools": "^1.2.0"
