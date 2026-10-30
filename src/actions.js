@@ -2,7 +2,7 @@ export default {
 	/**
 	 * INTERNAL: Get the available actions.
 	 */
-	getActions: function () {
+	getActions: function() {
 		let actions = {}
 
 		actions['document'] = {
@@ -207,11 +207,38 @@ export default {
 					tooltip: 'Enter the API endpoint to trigger',
 					regex: `/${this.REGEX_ENDPOINT}/`,
 				},
+				{
+					type: 'dropdown',
+					label: 'Method',
+					id: 'method',
+					choices: [
+						{ id: 'GET', label: 'GET' },
+						{ id: 'PUT', label: 'PUT' },
+					]
+				},
+				{
+					type: 'textinput',
+					label: 'Payload',
+					id: 'payload',
+					default: '{}',
+					useVariables: true,
+				}
 			],
-			callback: async (action) => {
+			callback: async (action, ctx) => {
 				const opt = action.options
+				const payload = await ctx.parseVariablesInString(opt.payload)
 				this.log('debug', `Endpoint: ${opt.endpoint}`)
-				this.sendGetRequest(opt.endpoint)
+				this.log('debug', `Method: ${opt.method}`)
+				this.log('debug', `Payload: ${payload}`)
+
+				switch (opt.method) {
+					case 'GET':
+						this.sendGetRequest(opt.endpoint)
+						break
+					case 'PUT':
+						this.sendPutRequest(opt.endpoint, JSON.parse(payload))
+						break
+				}
 			},
 		}
 
