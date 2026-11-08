@@ -13,12 +13,12 @@
 		"url": "git+https://github.com/bitfocus/companion-module-boinx-mimolive.git"
 	},
 	"dependencies": {
-		"@companion-module/base": "~1.4.0",
-		"got": "~12.6.0",
+		"@companion-module/base": "~1.15.1",
+		"got": "^16.2.0",
 		"ws": "~8.21.0"
 	},
 	"devDependencies": {
-		"@companion-module/tools": "^2.8.0"
+		"@companion-module/tools": "^2.9.0"
 	},
 	"prettier": "@companion-module/tools/.prettierrc.json"
 }
